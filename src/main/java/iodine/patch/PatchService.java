@@ -95,33 +95,6 @@ public class PatchService {
         }
     }
 
-    public InputStream getOriginalFile(Path relativeFilePath) throws IOException {
-        RevTree branch = getSrcCommit().getTree();
-        TreeWalk fileTree = new TreeWalk(git.getRepository());
-        fileTree.addTree(branch);
-        fileTree.setRecursive(true);
-        fileTree.setFilter(PathFilter.create(relativeFilePath.toString()));
-        if (!fileTree.next()) {
-            throw new FileNotFoundException("File not found!");
-        }
-        ObjectId fileId = fileTree.getObjectId(0);
-        ObjectLoader commitFileLoader = git.getRepository().open(fileId);
-        return commitFileLoader.openStream();
-    }
-
-    public List<String> getOriginalFileLines(Path relativeFilePth) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(getOriginalFile
-                (relativeFilePth)));
-        return bufferedReader.lines().collect(Collectors.toList());
-    }
-
-    public String getOriginalFileString(Path relativePath) throws IOException {
-        StringBuilder stringBuilder = new StringBuilder();
-        getOriginalFileLines(relativePath).forEach(string -> stringBuilder.append(string).append
-                (System.lineSeparator()));
-        return stringBuilder.toString();
-    }
-
     public Git getGitAccess() {
         return git;
     }
