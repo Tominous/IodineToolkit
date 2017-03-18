@@ -78,6 +78,10 @@ public class Main {
         OptionSpec<File> brokenSrg = parser.acceptsAll(asList("brokensrg", "joinedsrg", "jsrg",
                 "bsrg"), "Manually sets the joined.srg to remap using CSV.").withRequiredArg()
                 .ofType(File.class).forHelp();
+        OptionSpec<Void> genPatches = parser.acceptsAll(asList("genpatch", "gpatch", "gpatches",
+                "genp"), "Generates patches on NMS.").forHelp();
+        OptionSpec<Void> applyPatches = parser.acceptsAll(asList("apatch", "apatches",
+                "applypatch", "applypatches"), "Applies patches on NMS.").forHelp();
         OptionSpec<Void> clean = parser.acceptsAll(asList("clean", "c")).forHelp();
         OptionSet parsedArgs = parser.parse(args);
         if (parsedArgs.has(help)) {
@@ -87,6 +91,24 @@ public class Main {
         boolean shouldClean = parsedArgs.has(clean);
         System.out.println("Structuring directories...");
         File mainDir = new File("iodine-sdk");
+        if (parsedArgs.has(genPatches) || parsedArgs.has(applyPatches)) {
+            if (!mainDir.exists()) throw new RuntimeException("No main directory!");
+            File patches = new File(mainDir, "patches");
+            File srcMainJava = new File(mainDir, "src/main/java");
+            if (!patches.exists()) throw new RuntimeException("No patches directory!");
+            if (!srcMainJava.exists()) throw new RuntimeException("No src/main/java directory!");
+            PatchService patchService = new PatchService(patches, srcMainJava);
+            if (parsedArgs.has(genPatches)) {
+                System.out.println("Generating patches...");
+                patchService.generatePatches();
+                System.out.println("Patches generated!");
+                return;
+            }
+            System.out.println("Applying patches...");
+            patchService.applyPatches();
+            System.out.println("Patches applied!");
+            return;
+        }
         if (!mainDir.exists()) mainDir.mkdir();
         File srcMainJava = new File(mainDir, "src/main/java");
         if (shouldClean && srcMainJava.exists()) recursiveDelete(srcMainJava);
