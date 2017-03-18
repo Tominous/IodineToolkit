@@ -88,6 +88,7 @@ public class GradleScriptBuilder {
         plugins.forEach((pluginName) -> printWriter.println("apply plugin: '" + pluginName + "'"));
         printWriter.println();
         printWriter.println("repositories {");
+        printWriter.println("    mavenCentral()");
         repositories.forEach((repositoryData -> {
             printWriter.println("    maven {");
             printWriter.println("       name = '" + repositoryData.id + "'");
