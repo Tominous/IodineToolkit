@@ -27,6 +27,10 @@
             <id>localrepo</id>
             <url>file:///${project.basedir}/localrepo</url>
         </repository>
+        <repository>
+            <id>techcable</id>
+            <url>https://repo.techcable.net/content/repositories/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -39,6 +43,11 @@
             <groupId>net.minecraftforge</groupId>
             <artifactId>fernflower</artifactId>
             <version>2.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>net.techcable</groupId>
+            <artifactId>srglib</artifactId>
+            <version>0.1.2</version>
         </dependency>
         <dependency>
             <groupId>net.md-5</groupId>
