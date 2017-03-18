@@ -10,6 +10,33 @@ import java.util.List;
 
 public class POMData {
 
+    private final String groupId;
+    private final String artifactId;
+    private final String version;
+
+    public String getArtifactId() {
+        return artifactId;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    private final List<DependencyData> dependencies;
+    private final List<RepositoryData> repositories;
+
+    public List<DependencyData> getDependencies() {
+        return dependencies;
+    }
+
+    public List<RepositoryData> getRepositories() {
+        return repositories;
+    }
+
     private final String xml;
 
     public String getXml() {
@@ -25,6 +52,11 @@ public class POMData {
         model.setModelVersion("4.0.0");
         dependencies.forEach((dependencyData -> dependencyData.write(model)));
         repositories.forEach((repositoryData -> repositoryData.write(model)));
+        this.dependencies = dependencies;
+        this.repositories = repositories;
+        this.groupId = groupId;
+        this.artifactId = artifactId;
+        this.version = versionId;
         StringWriter writer = new StringWriter();
         new MavenXpp3Writer().write(writer, model);
         this.xml = writer.toString();

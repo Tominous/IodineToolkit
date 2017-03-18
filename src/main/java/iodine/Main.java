@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import iodine.maven.DependencyData;
+import iodine.maven.GradleScriptBuilder;
 import iodine.maven.POMData;
 import iodine.maven.RepositoryData;
 import iodine.obf.CSVReader;
@@ -122,6 +123,14 @@ public class Main {
         if (shouldClean && pomXml.exists()) recursiveDelete(pomXml);
         if (pomXml.exists()) throw new RuntimeException("pom.xml exists! Previous installation " +
                 "possible!");
+        File buildGradle = new File(mainDir, "build.gradle");
+        if (shouldClean && buildGradle.exists()) recursiveDelete(buildGradle);
+        if (buildGradle.exists()) throw new RuntimeException("build.gradle exists! Previous " +
+                "installation possible!");
+        File settingsGradle = new File(mainDir, "settings.gradle");
+        if (shouldClean && settingsGradle.exists()) recursiveDelete(settingsGradle);
+        if (settingsGradle.exists()) throw new RuntimeException("settings.gradle exists! Previous" +
+                " installation possible!");
         File patches = new File(mainDir, "patches");
         if (!patches.exists()) patches.mkdir();
         File bin = new File(mainDir, "bin");
@@ -195,6 +204,13 @@ public class Main {
                 .singletonList(RepositoryData.MOJANG_REPOSITORY));
         Files.write(pomXml.toPath(), pomData.getXml().getBytes(StandardCharsets.UTF_8),
                 StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        System.out.println("Creating build.gradle...");
+        String gradleScript = new GradleScriptBuilder().importPom(pomData).create();
+        Files.write(buildGradle.toPath(), gradleScript.getBytes(StandardCharsets.UTF_8),
+                StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
+        System.out.println("Creating settings.gradle...");
+        Files.write(settingsGradle.toPath(), "rootProject.name = 'nms'".getBytes(StandardCharsets
+                .UTF_8), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
         System.out.println("Creating patch service...");
         new PatchService(patches, srcMainJava).getGitAccess().close();
         System.out.println("Finished!");
