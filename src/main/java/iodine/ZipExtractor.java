@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.file.Files;
 import java.util.function.Predicate;
 import java.util.zip.ZipFile;
 
@@ -22,13 +23,11 @@ public class ZipExtractor {
 
     public void extract(File outputDirectory, boolean deleteFile) {
         zipFile.stream().forEach((zipEntry) -> {
-            if (compatibleNamePredicate.test(zipEntry.getName())) {
-                File outputFile = new File(outputDirectory, zipEntry.getName());
-                if (outputFile.getParentFile() != null) {
-                    outputFile.getParentFile().mkdirs();
-                } else {
-                    throw new RuntimeException("Parent file null.");
-                }
+            if (!zipEntry.isDirectory() && compatibleNamePredicate.test(zipEntry.getName())) {
+                File outputFile = new File(outputDirectory.getAbsolutePath() + File.separator +
+                        zipEntry
+                        .getName());
+                outputFile.getParentFile().mkdirs();
                 try {
                     FileOutputStream fileOutputStream = new FileOutputStream(outputFile);
                     ReadableByteChannel streamChannel = Channels.newChannel(zipFile

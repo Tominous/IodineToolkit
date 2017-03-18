@@ -26,10 +26,17 @@ public class SRGReader {
         mappings = MappingsFormat.SEARGE_FORMAT.parseLines(strings);
     }
 
+    public static boolean isValidUrl(String url) throws Exception {
+        return isValidUrl(new URL(url));
+    }
+
     public static boolean isValidUrl(URL url) throws IOException {
         HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
         httpURLConnection.setRequestProperty("User-Agent", "Mozilla/5.0");
-        if (httpURLConnection.getResponseCode() == 404) {
+        httpURLConnection.setConnectTimeout((200 * 1000));
+        httpURLConnection.setReadTimeout((200 * 1000));
+        int responseCode = httpURLConnection.getResponseCode();
+        if (responseCode == 404 || responseCode == 403) {
             return false;
         }
         return true;
@@ -41,7 +48,8 @@ public class SRGReader {
 
     public static Mappings getSrgFor(String version) throws Exception {
         URL url = new URL("http://files.minecraftforge.net/maven/de/oceanlabs/mcp/mcp/" +
-                version + "/mcp-" + version + "-srg.zip");
+                version + "/mcp-" + version + "-" +
+                "srg.zip");
         if (isValidUrl(url)) {
             List<String> srgFiles = CSVReader.findFile("joined.srg", url);
             return new SRGReader(srgFiles).getMappings();
