@@ -14,6 +14,8 @@ public class GradleScriptBuilder {
     private String groupId = null;
     private String version = null;
 
+    private boolean compileRootProject = false;
+
     private final Map<DependencyData, String> dependencies = new HashMap<>();
     private final List<RepositoryData> repositories = new ArrayList<>();
 
@@ -63,6 +65,11 @@ public class GradleScriptBuilder {
         return this;
     }
 
+    public GradleScriptBuilder setCompileRootProject(boolean bool) {
+        this.compileRootProject = bool;
+        return this;
+    }
+
     public GradleScriptBuilder importPom(POMData pomData) {
         pomData.getRepositories().forEach(this::addRepository);
         pomData.getDependencies().forEach(this::addCompileDependency);
@@ -98,6 +105,9 @@ public class GradleScriptBuilder {
         printWriter.println("}");
         printWriter.println();
         printWriter.println("dependencies {");
+        if (compileRootProject) {
+            printWriter.println("    " + "compile rootProject");
+        }
         dependencies.forEach(((dependencyData, scope) -> printWriter.println("    " + scope + " " +
                 "'" +
                 dependencyData.groupId + ":" +

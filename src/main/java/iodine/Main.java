@@ -84,6 +84,9 @@ public class Main {
         OptionSpec<Void> applyPatches = parser.acceptsAll(asList("apatch", "apatches",
                 "applypatch", "applypatches"), "Applies patches on NMS.").forHelp();
         OptionSpec<Void> clean = parser.acceptsAll(asList("clean", "c")).forHelp();
+        OptionSpec<Void> compileRootProject = parser.acceptsAll(asList("compileroot", "cr", "r",
+                "root"), "When generated build.gradle, it allows to compile the root gradle " +
+                "project; if exists.");
         OptionSet parsedArgs = parser.parse(args);
         if (parsedArgs.has(help)) {
             parser.printHelpOn(System.out);
@@ -205,7 +208,8 @@ public class Main {
         Files.write(pomXml.toPath(), pomData.getXml().getBytes(StandardCharsets.UTF_8),
                 StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         System.out.println("Creating build.gradle...");
-        String gradleScript = new GradleScriptBuilder().importPom(pomData).create();
+        String gradleScript = new GradleScriptBuilder().importPom(pomData).setCompileRootProject
+                (parsedArgs.has(compileRootProject)).create();
         Files.write(buildGradle.toPath(), gradleScript.getBytes(StandardCharsets.UTF_8),
                 StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
         System.out.println("Creating settings.gradle...");
