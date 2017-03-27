@@ -47,9 +47,7 @@ public class SRGReader {
     }
 
     public static Mappings getSrgFor(String version) throws Exception {
-        URL url = new URL("http://files.minecraftforge.net/maven/de/oceanlabs/mcp/mcp/" +
-                version + "/mcp-" + version + "-" +
-                "srg.zip");
+        URL url = new URL("http://mcpbot.bspk.rs/mcp/" + version + "/mcp-" + version + "-srg.zip");
         if (isValidUrl(url)) {
             List<String> srgFiles = CSVReader.findFile("joined.srg", url);
             return new SRGReader(srgFiles).getMappings();
