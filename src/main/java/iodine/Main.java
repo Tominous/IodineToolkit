@@ -159,6 +159,15 @@ public class Main {
                 "-" + minecraftVersion.value(parsedArgs) + "/mcp_" + releaseType
                 .value(parsedArgs) + "-" + mappingVersion.value(parsedArgs) +  "-" +
                 minecraftVersion.value(parsedArgs) + ".zip");
+        if (minecraftVersion.value(parsedArgs).equals("1.11.2")) {
+            System.out.println("Oh, your using 1.11.2! MCPBot is weird, so we're going to use a " +
+                    "special format for retrieving the CSV.");
+            csv = new URL("http://export.mcpbot.bspk" +
+                    ".rs/mcp_" + releaseType.value(parsedArgs) +
+                    "/" + mappingVersion.value(parsedArgs) +
+                    "-1.11/mcp_" + releaseType
+                    .value(parsedArgs) + "-" + mappingVersion.value(parsedArgs) +  "-1.11.zip");
+        }
         Mappings csvMappings = CSVReader.readMCPBotPackage(csv);
         Mappings brokenJoinedMappings = null;
         if (parsedArgs.has(brokenSrg)) {
