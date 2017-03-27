@@ -1,6 +1,8 @@
 package iodine;
 
 import net.md_5.specialsource.SpecialSource;
+import net.techcable.srglib.FieldData;
+import net.techcable.srglib.MethodData;
 import net.techcable.srglib.format.MappingsFormat;
 import net.techcable.srglib.mappings.Mappings;
 
@@ -87,6 +89,8 @@ public class Main {
         OptionSpec<Void> compileRootProject = parser.acceptsAll(asList("compileroot", "cr", "r",
                 "root"), "When generated build.gradle, it allows to compile the root gradle " +
                 "project; if exists.");
+        OptionSpec<Void> noCsv = parser.acceptsAll(asList("nocsv", "nc"), "Sets mappings to " +
+                "not be remapped using CSV.");
         OptionSet parsedArgs = parser.parse(args);
         if (parsedArgs.has(help)) {
             parser.printHelpOn(System.out);
@@ -169,6 +173,10 @@ public class Main {
                     .value(parsedArgs) + "-" + mappingVersion.value(parsedArgs) +  "-1.11.zip");
         }
         Mappings csvMappings = CSVReader.readMCPBotPackage(csv);
+        if (parsedArgs.has(noCsv)) {
+            csvMappings = Mappings.createRenamingMappings((type) -> type, MethodData::getName,
+                    (FieldData::getName));
+        }
         Mappings brokenJoinedMappings = null;
         if (parsedArgs.has(brokenSrg)) {
             brokenJoinedMappings = new SRGReader(brokenSrg.value(parsedArgs).toURI().toURL()
