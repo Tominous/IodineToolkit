@@ -72,7 +72,7 @@ public class Main {
         OptionSpec<String> minecraftVersion = parser.acceptsAll(asList("mcv", "minecraftversion",
          "mcversion"), "Sets the mapping's minecraft version for MCPBot and Forge.")
                 .withRequiredArg().ofType(String.class).required();
-        OptionSpec<String> releaseType = parser.acceptsAll(asList("reltype", "r", "rt",
+        OptionSpec<String> releaseType = parser.acceptsAll(asList("reltype", "rt",
                 "releasetype", "releaset", "rtype"), "Sets the mapping's release type.")
                 .withRequiredArg().ofType
                 (String.class)
@@ -228,9 +228,9 @@ public class Main {
                 (parsedArgs), Arrays.asList(DependencyData.DEFAULT_DEPENDENCIES), Collections
                 .singletonList(RepositoryData.MOJANG_REPOSITORY));
         if (parsedArgs.has(parentPom)) {
-            pomData = new POMData(new ParentData(null), "nms",
-                     Arrays.asList(DependencyData.DEFAULT_DEPENDENCIES), Collections
-                    .singletonList(RepositoryData.MOJANG_REPOSITORY));
+            pomData = new POMData(new ParentData(parentPom.value(parsedArgs)), "nms",
+                     Arrays.asList(DependencyData.DEFAULT_DEPENDENCIES), asList(RepositoryData
+                    .MAVEN2, RepositoryData.MOJANG_REPOSITORY));
         }
         Files.write(pomXml.toPath(), pomData.getXml().getBytes(StandardCharsets.UTF_8),
                 StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);

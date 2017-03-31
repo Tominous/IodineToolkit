@@ -9,20 +9,24 @@ import java.io.FileReader;
 
 public class ParentData {
 
-    private final Parent parent = new Parent();
+    private Parent parent;
 
     public ParentData(File parentPom) {
         try {
+            parent = new Parent();
             Model model = new MavenXpp3Reader().read(new FileReader(parentPom));
             parent.setVersion(model.getVersion());
             parent.setArtifactId(model.getArtifactId());
             parent.setGroupId(model.getGroupId());
         } catch (Exception e) {
-
+            parent = null;
         }
     }
 
     void write(Model model) {
+        if (parent == null) {
+            return;
+        }
         model.setParent(parent);
     }
 

@@ -8,6 +8,9 @@ public class RepositoryData {
     public static final RepositoryData MOJANG_REPOSITORY = new RepositoryData("minecraft",
             "https://libraries.minecraft.net/");
 
+    public static final RepositoryData MAVEN2 = new RepositoryData("maven2", "https://repo.maven.apache" +
+            ".org/maven2/");
+
     public final String id;
     public final String url;
 
