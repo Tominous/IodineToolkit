@@ -80,7 +80,8 @@ public class GradleScriptBuilder {
     }
 
     public static void main(String... args) throws Exception {
-        POMData pomData = new POMData("net.minecraft.server", "nms", "1.11", Arrays.asList
+        POMData pomData = new POMData(new ParentData(null), "net.minecraft.server", "nms", "1.11",
+                Arrays.asList
                 (DependencyData.DEFAULT_DEPENDENCIES), Collections.singletonList(RepositoryData
                 .MOJANG_REPOSITORY));
         System.out.println(new GradleScriptBuilder().importPom(pomData).create());
