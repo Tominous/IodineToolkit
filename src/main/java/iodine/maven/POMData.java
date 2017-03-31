@@ -43,9 +43,11 @@ public class POMData {
         return xml;
     }
 
-    public POMData(String groupId, String artifactId, String versionId, List<DependencyData>
+    public POMData(ParentData parentData, String groupId, String artifactId, String versionId,
+                   List<DependencyData>
             dependencies, List<RepositoryData> repositories) throws IOException {
         Model model = new Model();
+        parentData.write(model);
         model.setGroupId(groupId);
         model.setArtifactId(artifactId);
         model.setVersion(versionId);
@@ -63,7 +65,8 @@ public class POMData {
     }
 
     public static void main(String... args) throws Exception {
-        System.out.println(new POMData("meow", "meow", "meow", Collections.emptyList(),
+        System.out.println(new POMData(new ParentData(null),"meow", "meow", "meow", Collections
+                .emptyList(),
                 Collections.emptyList()));
     }
 

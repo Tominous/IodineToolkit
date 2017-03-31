@@ -25,6 +25,7 @@ import java.util.Comparator;
 import iodine.maven.DependencyData;
 import iodine.maven.GradleScriptBuilder;
 import iodine.maven.POMData;
+import iodine.maven.ParentData;
 import iodine.maven.RepositoryData;
 import iodine.obf.CSVReader;
 import iodine.obf.SRGReader;
@@ -91,6 +92,8 @@ public class Main {
                 "project; if exists.");
         OptionSpec<Void> noCsv = parser.acceptsAll(asList("nocsv", "nc"), "Sets mappings to " +
                 "not be remapped using CSV.");
+        OptionSpec<File> parentPom = parser.acceptsAll(asList("pom", "p"), "Sets the parent POM" +
+                " for the generated POM.xml").withRequiredArg().ofType(File.class).forHelp();
         OptionSet parsedArgs = parser.parse(args);
         if (parsedArgs.has(help)) {
             parser.printHelpOn(System.out);
@@ -219,7 +222,12 @@ public class Main {
                 srcMainJava.getAbsolutePath()
         });
         System.out.println("Generating POM...");
-        POMData pomData = new POMData("net.minecraft.server", "nms", minecraftVersion.value
+        ParentData parentData = new ParentData(null);
+        if (parsedArgs.has(parentPom)) {
+            parentData = new ParentData(parentPom.value(parsedArgs));
+        }
+        POMData pomData = new POMData(parentData, "net.minecraft.server", "nms", minecraftVersion
+                .value
                 (parsedArgs), Arrays.asList(DependencyData.DEFAULT_DEPENDENCIES), Collections
                 .singletonList(RepositoryData.MOJANG_REPOSITORY));
         Files.write(pomXml.toPath(), pomData.getXml().getBytes(StandardCharsets.UTF_8),
