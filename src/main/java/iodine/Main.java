@@ -240,7 +240,7 @@ public class Main {
                         .getArtifactId(), parent.getVersion()));
             } else throw new RuntimeException();
             pomData = new POMData(parentData, "nms",
-                     Arrays.asList(DependencyData.DEFAULT_DEPENDENCIES), asList(RepositoryData
+                     dependencyDataList, asList(RepositoryData
                     .MAVEN2, RepositoryData.MOJANG_REPOSITORY));
         }
         Files.write(pomXml.toPath(), pomData.getXml().getBytes(StandardCharsets.UTF_8),
