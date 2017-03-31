@@ -23,6 +23,10 @@ public class ParentData {
         }
     }
 
+    public Parent getParent() {
+        return parent;
+    }
+
     void write(Model model) {
         if (parent == null) {
             return;

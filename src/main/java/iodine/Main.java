@@ -6,6 +6,7 @@ import net.techcable.srglib.MethodData;
 import net.techcable.srglib.format.MappingsFormat;
 import net.techcable.srglib.mappings.Mappings;
 
+import org.apache.maven.model.Parent;
 import org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler;
 
 import java.io.File;
@@ -18,9 +19,11 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import iodine.maven.DependencyData;
 import iodine.maven.GradleScriptBuilder;
@@ -228,7 +231,15 @@ public class Main {
                 (parsedArgs), Arrays.asList(DependencyData.DEFAULT_DEPENDENCIES), Collections
                 .singletonList(RepositoryData.MOJANG_REPOSITORY));
         if (parsedArgs.has(parentPom)) {
-            pomData = new POMData(new ParentData(parentPom.value(parsedArgs)), "nms",
+            ParentData parentData = new ParentData(parentPom.value(parsedArgs));
+            List<DependencyData> dependencyDataList = new ArrayList<>();
+            dependencyDataList.addAll(Arrays.asList(DependencyData.DEFAULT_DEPENDENCIES));
+            if (parentData.getParent() != null) {
+                Parent parent = parentData.getParent();
+                dependencyDataList.add(new DependencyData(parent.getGroupId(), parent
+                        .getArtifactId(), parent.getVersion()));
+            } else throw new RuntimeException();
+            pomData = new POMData(parentData, "nms",
                      Arrays.asList(DependencyData.DEFAULT_DEPENDENCIES), asList(RepositoryData
                     .MAVEN2, RepositoryData.MOJANG_REPOSITORY));
         }
