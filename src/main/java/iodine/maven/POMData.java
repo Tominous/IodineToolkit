@@ -10,9 +10,9 @@ import java.util.List;
 
 public class POMData {
 
-    private final String groupId;
+    private String groupId;
     private final String artifactId;
-    private final String version;
+    private String version;
 
     public String getArtifactId() {
         return artifactId;
@@ -62,6 +62,22 @@ public class POMData {
         StringWriter writer = new StringWriter();
         new MavenXpp3Writer().write(writer, model);
         this.xml = writer.toString();
+    }
+
+    public POMData(ParentData parentData, String artifactId, List<DependencyData> dependencies,
+                   List<RepositoryData> repositories) throws IOException {
+        Model model = new Model();
+        parentData.write(model);
+        model.setArtifactId(artifactId);
+        model.setModelVersion("4.0.0");
+        dependencies.forEach((dependencyData -> dependencyData.write(model)));
+        repositories.forEach((repositoryData -> repositoryData.write(model)));
+        this.dependencies = dependencies;
+        this.repositories = repositories;
+        this.artifactId = artifactId;
+        StringWriter stringWriter = new StringWriter();
+        new MavenXpp3Writer().write(stringWriter, model);
+        this.xml = stringWriter.toString();
     }
 
     public static void main(String... args) throws Exception {

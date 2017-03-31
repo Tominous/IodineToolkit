@@ -222,21 +222,27 @@ public class Main {
                 srcMainJava.getAbsolutePath()
         });
         System.out.println("Generating POM...");
-        ParentData parentData = new ParentData(null);
-        if (parsedArgs.has(parentPom)) {
-            parentData = new ParentData(parentPom.value(parsedArgs));
-        }
-        POMData pomData = new POMData(parentData, "net.minecraft.server", "nms", minecraftVersion
+        POMData pomData = new POMData(new ParentData(null), "net.minecraft.server", "nms",
+                minecraftVersion
                 .value
                 (parsedArgs), Arrays.asList(DependencyData.DEFAULT_DEPENDENCIES), Collections
                 .singletonList(RepositoryData.MOJANG_REPOSITORY));
+        if (parsedArgs.has(parentPom)) {
+            pomData = new POMData(new ParentData(null), "nms",
+                     Arrays.asList(DependencyData.DEFAULT_DEPENDENCIES), Collections
+                    .singletonList(RepositoryData.MOJANG_REPOSITORY));
+        }
         Files.write(pomXml.toPath(), pomData.getXml().getBytes(StandardCharsets.UTF_8),
                 StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         System.out.println("Creating build.gradle...");
-        String gradleScript = new GradleScriptBuilder().importPom(pomData).setCompileRootProject
-                (parsedArgs.has(compileRootProject)).create();
-        Files.write(buildGradle.toPath(), gradleScript.getBytes(StandardCharsets.UTF_8),
-                StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
+        if (!parsedArgs.has(parentPom)) {
+            String gradleScript = new GradleScriptBuilder().importPom(pomData).setCompileRootProject
+                    (parsedArgs.has(compileRootProject)).create();
+            Files.write(buildGradle.toPath(), gradleScript.getBytes(StandardCharsets.UTF_8),
+                    StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
+        } else {
+            System.out.println("build.gradle could not be created, since POM is a module.");
+        }
         System.out.println("Creating settings.gradle...");
         Files.write(settingsGradle.toPath(), "rootProject.name = 'nms'".getBytes(StandardCharsets
                 .UTF_8), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
