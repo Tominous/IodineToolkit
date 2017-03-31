@@ -14,8 +14,8 @@ public class DependencyData {
             new DependencyData("com.google.guava", "guava", "19.0"),
             new DependencyData("org.apache.commons", "commons-lang3", "3.4"),
             new DependencyData("commons-io", "commons-io", "2.5"),
-            new DependencyData("org.apache.logging.log4j", "log4j-api", "2.0beta9"),
-            new DependencyData("org.apache.logging.log4j", "log4j-core", "2.0beta9")
+            new DependencyData("org.apache.logging.log4j", "log4j-api", "2.0-beta9"),
+            new DependencyData("org.apache.logging.log4j", "log4j-core", "2.0-beta9")
     };
 
     public final String groupId;
