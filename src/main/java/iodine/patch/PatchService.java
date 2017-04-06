@@ -3,6 +3,7 @@ package iodine.patch;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.PatchApplyException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.diff.RawTextComparator;
@@ -85,14 +86,21 @@ public class PatchService {
         });
     }
 
-    public void applyPatches() throws Exception {
+    public boolean applyPatches() throws Exception {
         git.reset().setMode(ResetCommand.ResetType.HARD).setRef(getSrcCommit().getName()).call();
         File[] patchFiles = patchDirectory.listFiles(((dir, name) -> name.endsWith(".patch"))
         ) != null ? patchDirectory.listFiles(((dir, name) -> name.endsWith(".patch"))) : new
                 File[0];
+        boolean allPatchesApplied = true;
         for (File patchFile : patchFiles) {
-            git.apply().setPatch(new FileInputStream(patchFile)).call();
+        	try {
+        		git.apply().setPatch(new FileInputStream(patchFile)).call();
+        	}catch(PatchApplyException e) {
+        		allPatchesApplied = false;
+        		System.out.println("Failed to apply patch "+patchFile.getName()+". " + e.getMessage());
+        	}
         }
+        return allPatchesApplied;
     }
 
     public Git getGitAccess() {
