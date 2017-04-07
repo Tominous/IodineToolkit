@@ -119,9 +119,14 @@ public class Main {
                 return;
             }
             System.out.println("Applying patches...");
-            patchService.applyPatches();
-            System.out.println("Patches applied!");
+            boolean allApplied = patchService.applyPatches();
+            if (allApplied) {
+            	System.out.println("Patches applied!");
+            } else {
+            	System.out.println("Patches applied. But one or more failed.");
+            }
             return;
+            
         }
         if (!mainDir.exists()) mainDir.mkdir();
         File srcMainJava = new File(mainDir, "src/main/java");

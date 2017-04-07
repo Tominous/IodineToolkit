@@ -7,7 +7,7 @@
 /*
 !/src
 !build.gradle
-!*.project
+.project
 !/gradle
 !gradlew
 !gradlew.bat
